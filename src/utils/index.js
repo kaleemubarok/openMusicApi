@@ -31,10 +31,12 @@ const mapAlbumDBToModel = ({
   id,
   name,
   year,
+  songs,
 }) => ({
   id,
   name,
   year,
+  songs,
 });
 
 module.exports = { mapSongsDBToModel, mapSongDBToModel, mapAlbumDBToModel };

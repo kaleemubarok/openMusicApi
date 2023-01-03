@@ -11,7 +11,7 @@ class AlbumsService {
   }
 
   async addAlbum({ name, year }) {
-    const id = nanoid(16);
+    const id = 'album-'.concat(nanoid(16));
     const createdAt = new Date().toISOString();
     const updatedAt = createdAt;
 
@@ -29,13 +29,8 @@ class AlbumsService {
     return result.rows[0].id;
   }
 
-  // async getNotes() {
-  //   const result = await this._pool.query('SELECT * FROM notes');
-  //   return result.rows.map(mapDBToModel);
-  // }
-
   async getAlbumByID(id) {
-    const query = {
+    let query = {
       text: 'SELECT * FROM albums WHERE id = $1',
       values: [id],
     };
@@ -43,7 +38,15 @@ class AlbumsService {
     if (!result.rows.length) {
       throw new NotFoundError('Id catatan tidak ditemukan');
     }
-    return result.rows.map(mapAlbumDBToModel)[0];
+    const album = result.rows.map(mapAlbumDBToModel)[0];
+
+    query = {
+      text: 'SELECT s.id, title, performer FROM songs s INNER JOIN albums a on a.id=s.album_id WHERE a.id = $1',
+      values: [album.id],
+    };
+    const songs = await this._pool.query(query);
+    album.songs = songs.rows;
+    return album;
   }
 
   async editAlbumById(id, { name, year }) {
