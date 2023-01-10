@@ -2,7 +2,6 @@ const routes = (handler) => [
   {
     method: 'POST',
     path: '/albums',
-    // handler: handler.postAlbumHandler,
     handler: (request, h) => handler.postAlbumHandler(request, h),
   },
   {

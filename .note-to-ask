@@ -1,0 +1,2 @@
+1. why dont you guys implementing unique constrain for playlistId-Songs pair to prevent existing song to be re-add to an existing playlist?
+1. how to handle internal error like existing db constrain key while using onPreResponse?

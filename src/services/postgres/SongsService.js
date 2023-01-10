@@ -16,16 +16,13 @@ class SongsService {
   }) {
     const id = 'song-'.concat(nanoid(16));
     const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
 
     const query = {
       text: 'INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
-      values: [id, title, year, performer, genre, duration, albumId, createdAt, updatedAt],
+      values: [id, title, year, performer, genre, duration, albumId, createdAt, createdAt],
     };
 
     const result = await this._pool.query(query);
-
-    console.log(result);
 
     if (!result.rows[0].id) {
       throw new InvariantError('Lagu gagal ditambahkan');
@@ -40,13 +37,19 @@ class SongsService {
     };
 
     if (title || performer) {
-      query = {
-        text: 'SELECT id, title, performer FROM songs WHERE lower(title) LIKE \'%\'||lower($1)||\'%\' OR lower(performer) LIKE \'%\'||lower($2)||\'%\'',
-        values: [title, performer],
-      };
+      if (title && performer) {
+        query = {
+          text: 'SELECT id, title, performer FROM songs WHERE lower(title) LIKE \'%\'||lower($1)||\'%\' AND lower(performer) LIKE \'%\'||lower($2)||\'%\'',
+          values: [title, performer],
+        };
+      } else {
+        query = {
+          text: 'SELECT id, title, performer FROM songs WHERE lower(title) LIKE \'%\'||lower($1)||\'%\' OR lower(performer) LIKE \'%\'||lower($2)||\'%\'',
+          values: [title, performer],
+        };
+      }
     }
 
-    console.log(query);
     const result = await this._pool.query(query);
     return result.rows.map(mapSongsDBToModel);
   }

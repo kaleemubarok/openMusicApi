@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@hapi/hapi': ^21.1.0
+  '@hapi/jwt': ^3.0.0
   bcrypt: ^5.1.0
   dotenv: ^16.0.3
   eslint: ^8.30.0
@@ -15,6 +16,7 @@ specifiers:
 
 dependencies:
   '@hapi/hapi': 21.1.0
+  '@hapi/jwt': 3.0.0
   bcrypt: 5.1.0
   dotenv: 16.0.3
   joi: 17.7.0
@@ -97,6 +99,13 @@ packages:
       '@hapi/hoek': 10.0.1
     dev: false
 
+  /@hapi/catbox-object/3.0.0:
+    resolution: {integrity: sha512-1XGSAvUP8FB62OWB87XQcgZhzPaHrmXHBecNrs975nCuTkF8LIDyhRw3dp2omT3vJKT0+pUEfSzHhJ+1SLQCJw==}
+    dependencies:
+      '@hapi/boom': 10.0.0
+      '@hapi/hoek': 10.0.1
+    dev: false
+
   /@hapi/catbox/12.1.0:
     resolution: {integrity: sha512-60MCN5lgaXcuRTjMZqLR+DV0clS5RAFAwfYAQU2/na6PqrXHDRQcJwVMwP7jJayCrJm4POJlLDzZLuh1ba5XUg==}
     dependencies:
@@ -171,6 +180,21 @@ packages:
       '@hapi/bourne': 3.0.0
       '@hapi/cryptiles': 6.0.0
       '@hapi/hoek': 10.0.1
+    dev: false
+
+  /@hapi/jwt/3.0.0:
+    resolution: {integrity: sha512-HH0zVn6WrAUOZQnlqP8XcbQzsqCdrcI8YGMuGVrKahVXH+RvARPVLGToneWprGcbA8sHSwoanJeAjKovyUo8vg==}
+    dependencies:
+      '@hapi/b64': 6.0.0
+      '@hapi/boom': 10.0.0
+      '@hapi/bounce': 3.0.0
+      '@hapi/bourne': 3.0.0
+      '@hapi/catbox-object': 3.0.0
+      '@hapi/cryptiles': 6.0.0
+      '@hapi/hoek': 10.0.1
+      '@hapi/wreck': 18.0.0
+      ecdsa-sig-formatter: 1.0.11
+      joi: 17.7.0
     dev: false
 
   /@hapi/mimos/7.0.0:
@@ -669,6 +693,12 @@ packages:
   /dotenv/16.0.3:
     resolution: {integrity: sha512-7GO6HghkA5fYG9TYnNxi14/7K9f5occMlp3zXAuSxn7CKCxt9xbNWG7yF8hTCSUchlfWSe3uLmlPfigevRItzQ==}
     engines: {node: '>=12'}
+    dev: false
+
+  /ecdsa-sig-formatter/1.0.11:
+    resolution: {integrity: sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==}
+    dependencies:
+      safe-buffer: 5.2.1
     dev: false
 
   /emoji-regex/8.0.0:
