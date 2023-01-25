@@ -2,8 +2,10 @@
 const ClientError = require('../../exceptions/ClientError');
 
 class AlbumsHandler {
-  constructor(service, validator) {
+  constructor(service, storageService, uploadsValidator, validator) {
     this._service = service;
+    this._storageService = storageService;
+    this._uploadsValidator = uploadsValidator;
     this._validator = validator;
   }
 
@@ -71,6 +73,44 @@ class AlbumsHandler {
       message: 'Album berhasil dihapus',
     });
     return response;
+  }
+
+  async postAlbumCoverHandler(request, h) {
+    try {
+      const { cover } = request.payload;
+      const { id } = request.params;
+      this._uploadsValidator.validateImageHeaders(cover.hapi.headers);
+
+      const fileLocation = await this._storageService.writeFile(cover, cover.hapi);
+      console.log(`file uploaded to: ${fileLocation}`);
+
+      // store cover location to DB
+      this._service.editAlbumCover(id, fileLocation);
+
+      const response = h.response({
+        status: 'success',
+        message: 'Sampul berhasil diunggah',
+      });
+      response.code(201);
+      return response;
+    } catch (error) {
+      if (error instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: error.message,
+        });
+        response.code(error.statusCode);
+        return response;
+      }
+      // Server ERROR!
+      const response = h.response({
+        status: 'error',
+        message: 'Maaf, terjadi kegagalan pada server kami.',
+      });
+      response.code(500);
+      console.error(error);
+      return response;
+    }
   }
 }
 

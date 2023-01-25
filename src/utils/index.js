@@ -31,11 +31,13 @@ const mapAlbumDBToModel = ({
   id,
   name,
   year,
+  cover_url,
   songs,
 }) => ({
   id,
   name,
   year,
+  coverUrl: cover_url,
   songs,
 });
 

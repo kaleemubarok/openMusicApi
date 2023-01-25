@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+// const path = require('path');
 
 const ClientError = require('./exceptions/ClientError');
 // Albums services
@@ -34,11 +35,18 @@ const CollaborationsValidator = require('./validator/collaborations');
 const _exports = require('./api/exports');
 const ProducerService = require('./services/rabbitmq/ProducerService');
 const ExportsValidator = require('./validator/exports');
+// uploads
+// const uploads = require('./api/uploads');
+const StorageService = require('./services/S3/StorageService');
+const UploadsValidator = require('./validator/uploads');
 
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
   const usersService = new UsersService();
+  // eslint-disable-next-line max-len
+  // const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images')); // local
+  const storageService = new StorageService();
   const authenticationsService = new AuthenticationsService();
   const collaborationsService = new CollaborationsService(usersService);
   const playlistsService = new PlaylistsService(collaborationsService);
@@ -81,6 +89,8 @@ const init = async () => {
       plugin: albums,
       options: {
         service: albumsService,
+        storageService,
+        UploadsValidator,
         validator: AlbumsValidator,
       },
     }, {

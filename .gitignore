@@ -1,7 +1,7 @@
 # Dependency directories
 node_modules/
-notes-api-webserver.pe,
 .env
 .prod.env
 .pem
 .vscode
+src/api/uploads/file/images/
