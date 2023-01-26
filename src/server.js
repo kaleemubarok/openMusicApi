@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const config = require('./utils/config');
 // const path = require('path');
 
 const ClientError = require('./exceptions/ClientError');
@@ -39,9 +40,12 @@ const ExportsValidator = require('./validator/exports');
 // const uploads = require('./api/uploads');
 const StorageService = require('./services/S3/StorageService');
 const UploadsValidator = require('./validator/uploads');
+// cache
+const CacheService = require('./services/redis/CacheService');
 
 const init = async () => {
-  const albumsService = new AlbumsService();
+  const cacheService = new CacheService();
+  const albumsService = new AlbumsService(cacheService);
   const songsService = new SongsService();
   const usersService = new UsersService();
   // eslint-disable-next-line max-len
@@ -51,8 +55,8 @@ const init = async () => {
   const collaborationsService = new CollaborationsService(usersService);
   const playlistsService = new PlaylistsService(collaborationsService);
   const server = Hapi.server({
-    port: process.env.PORT,
-    host: process.env.NODE_ENV !== 'prod' ? 'localhost' : '0.0.0.0',
+    port: config.app.port,
+    host: config.app.host,
     routes: {
       cors: {
         origin: ['*'],

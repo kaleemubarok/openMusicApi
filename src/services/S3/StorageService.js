@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 const AWS = require('aws-sdk');
+const config = require('../../utils/config');
 
 class StorageService {
   constructor() {
@@ -8,7 +9,7 @@ class StorageService {
 
   writeFile(file, meta) {
     const parameter = {
-      Bucket: process.env.AWS_BUCKET_NAME, // Nama S3 Bucket yang digunakan
+      Bucket: config.s3.bucketName, // Nama S3 Bucket yang digunakan
       Key: +new Date() + meta.filename, // Nama berkas yang akan disimpan
       Body: file._data, // Berkas (dalam bentuk Buffer) yang akan disimpan
       ContentType: meta.headers['content-type'], // MIME Type berkas yang akan disimpan

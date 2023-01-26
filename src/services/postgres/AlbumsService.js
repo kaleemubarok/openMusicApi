@@ -6,8 +6,10 @@ const { mapAlbumDBToModel } = require('../../utils');
 const NotFoundError = require('../../exceptions/NotFoundError');
 
 class AlbumsService {
-  constructor() {
+  constructor(cacheService) {
     this._pool = new Pool();
+
+    this._cacheService = cacheService;
   }
 
   async addAlbum({ name, year }) {
@@ -107,6 +109,7 @@ class AlbumsService {
     await this.getAlbumByID(albumId);
 
     const deleted = await this.deleteLike(userId, albumId);
+    await this._cacheService.delete(`likes:${albumId}`);
     if (deleted) {
       return 'Unlike saved';
     }
@@ -126,18 +129,35 @@ class AlbumsService {
   }
 
   async getLike(albumId) {
-    const query = {
-      text: 'SELECT count(*) AS likes FROM user_album_likes WHERE album_id = $1',
-      values: [albumId],
-    };
-    const result = await this._pool.query(query);
-    if (!result.rows.length) {
-      throw new NotFoundError('Id album tidak ditemukan');
-    }
-    const likes = +result.rows[0].likes;
-    console.log(`likes: ${likes}`);
+    try {
+      // getting likes from cache
+      const result = await this._cacheService.get(`likes:${albumId}`);
+      console.log(`likes: ${+JSON.parse(result)}`);
 
-    return likes;
+      return {
+        likes: +JSON.parse(result),
+        isCache: true,
+      };
+    } catch (error) {
+      // bila gagal, diteruskan dengan mendapatkan like dari database
+      const query = {
+        text: 'SELECT count(*) AS likes FROM user_album_likes WHERE album_id = $1',
+        values: [albumId],
+      };
+      const result = await this._pool.query(query);
+      if (!result.rows.length) {
+        throw new NotFoundError('Id album tidak ditemukan');
+      }
+      const likes = +result.rows[0].likes;
+      console.log(`likes: ${likes}`);
+
+      // storing likes count to cache
+      await this._cacheService.set(`likes:${albumId}`, JSON.stringify(likes));
+      return {
+        likes,
+        isCache: false,
+      };
+    }
   }
 }
 

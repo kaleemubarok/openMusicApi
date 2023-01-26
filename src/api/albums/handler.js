@@ -143,15 +143,18 @@ class AlbumsHandler {
     try {
       const { id: albumId } = request.params;
       console.log(albumId);
-      const likes = await this._service.getLike(albumId);
+      const result = await this._service.getLike(albumId);
 
       const response = h.response({
         status: 'success',
         data: {
-          likes,
+          likes: result.likes,
         },
       });
 
+      if (result.isCache) {
+        response.header('X-Data-Source', 'cache');
+      }
       return response;
     } catch (e) {
       if (e instanceof ClientError) {
