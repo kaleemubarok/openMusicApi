@@ -112,6 +112,59 @@ class AlbumsHandler {
       return response;
     }
   }
+
+  async postAlbumLikesHandler(request, h) {
+    try {
+      const { id: albumId } = request.params;
+      const userId = request.auth.credentials.id;
+
+      const likeIt = await this._service.postLike(userId, albumId);
+
+      const response = h.response({
+        status: 'success',
+        message: likeIt,
+      });
+      response.code(201);
+      return response;
+    } catch (e) {
+      if (e instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: e.message,
+        });
+        response.code(e.statusCode);
+        return response;
+      }
+      return h.response;
+    }
+  }
+
+  async getAlbumLikesHandler(request, h) {
+    try {
+      const { id: albumId } = request.params;
+      console.log(albumId);
+      const likes = await this._service.getLike(albumId);
+
+      const response = h.response({
+        status: 'success',
+        data: {
+          likes,
+        },
+      });
+
+      return response;
+    } catch (e) {
+      if (e instanceof ClientError) {
+        const response = h.response({
+          status: 'fail',
+          message: e.message,
+        });
+        response.code(e.statusCode);
+        return response;
+      }
+      return h.response;
+    }
+  }
 }
 
 module.exports = AlbumsHandler;
